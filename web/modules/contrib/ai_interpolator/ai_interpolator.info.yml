@@ -1,0 +1,10 @@
+name: AI Interpolator
+description: Provides a way to fill structured fields based on AI queries on a textual field.
+package: AI Interpolator
+type: module
+core_version_requirement: ^9.2 || ^10
+
+# Information added by Drupal.org packaging script on 2024-05-15
+version: '1.0.0-rc4'
+project: 'ai_interpolator'
+datestamp: 1715803411

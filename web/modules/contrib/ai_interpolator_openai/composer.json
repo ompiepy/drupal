@@ -1,0 +1,15 @@
+{
+  "name": "drupal/ai_interpolator_openai",
+  "description": "OpenAI for AI Interpolator",
+  "type": "drupal-module",
+  "require": {
+      "drupal/ai_interpolator": "^1.0.0-rc1",
+      "drupal/openai": "^1.0-beta4"
+  },
+  "authors": [
+      {
+          "name": "Marcus Johansson",
+          "email": "me@marcusmailbox.com"
+      }
+  ]
+}

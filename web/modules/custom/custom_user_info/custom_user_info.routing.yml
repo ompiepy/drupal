@@ -1,0 +1,4 @@
+custom_user_info.controller:
+  path: 'custom/user-info'
+  defaults:
+    _controller: '\Drupal\'

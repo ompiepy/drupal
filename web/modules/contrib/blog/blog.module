@@ -1,0 +1,115 @@
+<?php
+
+/**
+ * @file
+ * Enables multi-user blogs.
+ */
+
+use Drupal\Core\Database\Database;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+use Drupal\node\NodeInterface;
+
+/**
+ * Implements hook_entity_extra_field_info().
+ */
+function blog_entity_extra_field_info() {
+  $extra = [];
+  $extra['user']['user']['display']['blog__personal_blog_link'] = [
+    'label' => t('Personal blog link'),
+    'weight' => 0,
+    'visible' => FALSE,
+  ];
+  return $extra;
+}
+
+/**
+ * Implements hook_ENTITY_TYPE_view().
+ */
+function blog_user_view(&$build, $account, $display, $view_mode) {
+  if ($account->hasPermission('create blog_post content') && $display->getComponent('blog__personal_blog_link')) {
+    // Build internal link based on router.
+    $url = Url::fromRoute('view.blog.blog_user_all', ['arg_0' => $account->id()]);
+    $internal_link = Link::fromTextAndUrl(t('View recent blog entries'), $url)->toString();
+    $build['blog__personal_blog_link'] = [
+      '#type' => 'item',
+      '#title' => t('Blog'),
+      '#title_display' => 'invisible',
+      '#markup' => $internal_link,
+      '#attributes' => ['class' => ['blog']],
+    ];
+  }
+}
+
+/**
+ * Implements hook_help().
+ */
+function blog_help($path, $arg) {
+  switch ($path) {
+    case 'help.page.blog':
+      $output = '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t("The Blog module allows registered users to maintain an online journal, or <em>blog</em>. Blogs are made up of individual <em>blog entries</em>. By default, the blog entries are displayed by creation time in descending order, with comments enabled, and are promoted to the site's front page. For more information, see the online handbook entry for <a href='@blog'>Blog module</a>.", ['@blog' => 'http://drupal.org/handbook/modules/blog/']) . '</p>';
+      $output .= '<h3>' . t('Uses') . '</h3>';
+      $output .= '<dl>';
+      $output .= '<dt>' . t('Single-user blogs') . '</dt>';
+      $output .= '<dd>' . t("Each user's blog entries are automatically displayed with a link to the user's main blog page. You can create as many single-user blogs as you have site users with permission to create blog content.") . '</dd>';
+      $output .= '<dt>' . t('Multi-user blogs') . '</dt>';
+      $output .= '<dd>' . t("Blog entries from each single-user blog are also aggregated into one central multi-user blog, which displays the blog content of all users in a single listing.") . '</dd>';
+      $output .= '<dt>' . t('Navigation') . '</dt>';
+      $output .= '<dd>' . t("There is an optional <em>Blogs</em> menu item added to the Navigation menu, which displays all blogs available on your site, and a <em>My blog</em> item displaying the current user's blog entries.") . '</dd>';
+      $output .= '<dt>' . t('Blocks') . '</dt>';
+      $output .= '<dd>' . t('The Blog module also creates a default <em>Recent blog posts</em> block that may be enabled at the <a href="@blocks">blocks administration page</a>.', ['@blocks' => Url::fromRoute('block.admin_display')->toString()]) . '</dd>';
+      $output .= '</dl>';
+      return $output;
+  }
+}
+
+/**
+ * Implements hook_node_links_alter().
+ */
+function blog_node_links_alter(array &$node_links, NodeInterface $entity, array &$context) {
+  if ($entity->getEntityTypeId() == 'node' && $entity->bundle() == 'blog_post' && $context['view_mode'] != 'rss') {
+    $links = [];
+    $links['blog_usernames_blog'] = [
+      'title' => t("@username's Blog", [
+        '@username' => $entity->getOwner()
+          ->getDisplayName(),
+      ]),
+      'url' => Url::fromRoute('view.blog.blog_user_all', [
+        'arg_0' => $entity->getOwnerId(),
+      ]),
+      'attributes' => [
+        'title' => t("Read @username's latest blog entries.", [
+          '@username' => $entity->getOwner()
+            ->getDisplayName(),
+        ]),
+      ],
+    ];
+    $node_links['usernames_blog'] = [
+      '#theme' => 'links__node__blog',
+      '#links' => $links,
+      '#attributes' => ['class' => ['links', 'inline']],
+    ];
+  }
+}
+
+/**
+ * Helper function to determine if a user has blog posts already.
+ *
+ * @param \Drupal\user\UserInterface|NULL $account
+ *   Blog post owner user, or NULL.
+ *
+ * @return string
+ *   Count of blog posts.
+ */
+function blog_post_counter($account = NULL) {
+  $query = \Drupal::entityQuery('node')
+    ->condition('type', 'blog_post')
+    ->condition('status', 1)
+    ->accessCheck(TRUE);
+  if ($account !== NULL) {
+    $query->condition('uid', $account->id());
+  }
+  return $query->count()
+    ->execute();
+}

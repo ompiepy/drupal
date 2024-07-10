@@ -1,0 +1,7 @@
+try_eca.test:
+  path: 'try-eca/test'
+  defaults:
+    _controller: '\Drupal\try_eca\Controller\TryECATestController::test'
+    _title: 'Try ECA Test'
+  requirements:
+    _permission: 'access content'

@@ -1,0 +1,18 @@
+services:
+  blog.lister:
+    class: Drupal\blog\BlogLister
+    arguments: ['@current_user', '@config.factory']
+    tags:
+      - { name: blog_lister }
+  blog.breadcrumb:
+    class: Drupal\blog\BlogBreadcrumbBuilder
+    arguments: ['@blog.lister']
+    tags:
+      - { name: breadcrumb_builder, priority: 100 }
+  blog.uninstall_validator:
+    class: Drupal\blog\BlogUninstallValidator
+    arguments:
+      - '@string_translation'
+    tags:
+      - { name: module_install.uninstall_validator }
+    lazy: true

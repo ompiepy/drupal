@@ -1,0 +1,40 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall function for AI Interpolator.
+ */
+
+use Drupal\ai_interpolator\AiInterpolatorStatusField;
+use Drupal\Core\Link;
+use Drupal\Core\Url;
+
+/**
+ * Implements hook_uninstall().
+ */
+function ai_interpolator_uninstall($is_syncing) {
+  // Don't run delete hooks.
+  _ai_interpolator_entity_can_save_toggle(FALSE);
+  // Delete any lingering status fields.
+  foreach (['field_config', 'field_storage_config'] as $type) {
+    $loader = \Drupal::entityTypeManager()->getStorage($type);
+    $query = $loader->getQuery();
+    $query->condition('label', AiInterpolatorStatusField::FIELD_NAME);
+    foreach ($query->execute() as $id) {
+      $entity = $loader->load($id);
+      $entity->delete();
+    }
+  }
+  _ai_interpolator_entity_can_save_toggle(TRUE);
+}
+
+/**
+ * Implements hook_install().
+ */
+function ai_interpolator_install() {
+  $url = Url::fromUri('https://www.drupal.org/project/ai_interpolator', ['attributes' => ['target' => '_blank']]);
+  // Set a message to display after installation.
+  \Drupal::messenger()->addWarning(t('Note that the AI Interpolator does not do anything by itself, additional module have to be installed. Read more @link.', [
+    '@link' => Link::fromTextAndUrl(t('here'), $url)->toString(),
+  ]));
+}

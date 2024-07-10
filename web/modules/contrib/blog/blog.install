@@ -1,0 +1,26 @@
+<?php
+
+/**
+ * @file
+ * Install, update and uninstall functions for the Blog module.
+ */
+
+/**
+ * Add enforced configuration dependencies.
+ */
+function blog_update_9001(&$sandbox) {
+  $config_items = [
+    'field.storage.node.field_blog_comments',
+    'field.storage.node.field_blog_tags',
+    'node.type.blog_post',
+  ];
+  foreach ($config_items as $config_item) {
+    $storage = \Drupal::service('config.storage')->read($config_item);
+    if ($storage) {
+      $config = \Drupal::configFactory()->getEditable($config_item);
+      $dependencies = $config->get('dependencies');
+      $dependencies['enforced']['module'][] = 'blog';
+      $config->set('dependencies', $dependencies)->save(TRUE);
+    }
+  }
+}

@@ -1,0 +1,31 @@
+services:
+  plugin.manager.ai_interpolator:
+    class: Drupal\ai_interpolator\PluginManager\AiInterpolatorFieldRuleManager
+    parent: default_plugin_manager
+  plugin.manager.ai_processor:
+    class: Drupal\ai_interpolator\PluginManager\AiInterpolatorFieldProcessManager
+    parent: default_plugin_manager
+  ai_interpolator.field_config:
+    class: Drupal\ai_interpolator\FormAlter\AiInterpolatorFieldConfig
+    arguments: ['@entity_field.manager', '@ai_interpolator.field_rules', '@current_route_match', '@module_handler', '@plugin.manager.ai_processor']
+  ai_interpolator.field_rules:
+    class: Drupal\ai_interpolator\AiFieldRules
+    arguments: ['@plugin.manager.ai_interpolator', '@event_dispatcher']
+  ai_interpolator.entity_modifier:
+    class: Drupal\ai_interpolator\AiInterpolatorEntityModifier
+    arguments: ['@entity_field.manager', '@plugin.manager.ai_processor', '@ai_interpolator.field_rules', '@event_dispatcher']
+  ai_interpolator.rule_runner:
+    class: Drupal\ai_interpolator\AiInterpolatorRuleRunner
+    arguments: ['@entity_type.manager', '@ai_interpolator.field_rules', '@event_dispatcher']
+  ai_interpolator.prompt_helper:
+    class: Drupal\ai_interpolator\AiPromptHelper
+    arguments: ['@twig', '@current_user', '@token']
+  ai_interpolator.status_field:
+    class: Drupal\ai_interpolator\AiInterpolatorStatusField
+    arguments: ['@entity_type.manager', '@entity_field.manager']
+  ai_interpolator.rule_helper.general:
+    class: Drupal\ai_interpolator\Rulehelpers\GeneralHelper
+    arguments: ['@entity_field.manager', '@module_handler', '@ai_interpolator.field_config', '@token', '@current_user']
+  ai_interpolator.rule_helper.file:
+    class: Drupal\ai_interpolator\Rulehelpers\FileHelper
+    arguments: ['@entity_type.manager', '@file_system', '@file.repository', '@token', '@current_user']

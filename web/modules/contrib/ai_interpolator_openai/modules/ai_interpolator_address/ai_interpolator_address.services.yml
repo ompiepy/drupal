@@ -1,0 +1,4 @@
+services:
+  ai_interpolator_address.google_places_api:
+    class: Drupal\ai_interpolator_address\GooglePlacesApi
+    arguments: ['@http_client', '@config.factory']

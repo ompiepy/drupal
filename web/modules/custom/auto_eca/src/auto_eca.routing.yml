@@ -1,0 +1,7 @@
+auto_eca.create_form:
+  path: '/admin/config/system/auto-eca'
+  defaults:
+    _controller: '\Drupal\auto_eca\Controller\AutoECAController::createECAForm'
+    _title: 'Create ECA Rule'
+  requirements:
+    _permission: 'administer site configuration'

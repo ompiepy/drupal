@@ -1,0 +1,7 @@
+ai_interpolator_address.google_places_settings:
+  path: '/admin/config/google_places/settings'
+  defaults:
+    _form: '\Drupal\ai_interpolator_address\Form\GooglePlacesConfigForm'
+    _title: 'Setup Google Places API'
+  requirements:
+    _permission: 'administer site configuration'

@@ -1,0 +1,15 @@
+name: AI Interpolator Address
+description: Reads locations from text and make structured address elements.
+package: AI Interpolator
+type: module
+core_version_requirement: ^9.2 || ^10
+
+dependencies:
+  - drupal:ai_interpolator
+  - drupal:address
+  - drupal:ai_interpolator_openai
+
+# Information added by Drupal.org packaging script on 2024-03-06
+version: '1.0.0-rc1'
+project: 'ai_interpolator_openai'
+datestamp: 1709732167

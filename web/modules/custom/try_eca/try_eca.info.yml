@@ -1,0 +1,7 @@
+name: 'Try ECA'
+type: module
+description: 'Automatically create ECA rules based on user input.'
+core_version_requirement: ^8 || ^9 ||^10
+package: Custom
+dependencies:
+  - drupal:eca

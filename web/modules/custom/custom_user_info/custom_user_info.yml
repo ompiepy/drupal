@@ -1,0 +1,6 @@
+name: 'Custom User Info'
+type: module
+description: 'Displays the current logged-in users username.'
+cire_version_requirement: ^10
+package: custom
+version: 1.0

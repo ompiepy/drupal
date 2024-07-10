@@ -1,0 +1,11 @@
+<?php
+
+/**
+ * Implements hook_help().
+ */
+function try_eca_help($route_name, \Drupal\Core\Routing\RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    case 'help.page.auto_eca':
+      return '<p>' . t('This is the help page for the Try ECA module.') . '</p>';
+  }
+}
